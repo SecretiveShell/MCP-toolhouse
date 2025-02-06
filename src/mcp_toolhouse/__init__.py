@@ -1,4 +1,5 @@
 import platform
+import secrets
 from typing import Any
 import httpx
 from mcp.server.lowlevel import Server, NotificationOptions
@@ -6,6 +7,8 @@ from mcp.server.models import InitializationOptions
 import mcp.server.stdio
 import mcp.types as types
 import os
+
+TOOLHOUSE_BASE_URL: str = "https://api.toolhouse.ai/v1"
 
 TOOLHOUSE_API_KEY: str | None = os.environ.get("TOOLHOUSE_API_KEY", None)
 assert (
@@ -39,9 +42,7 @@ async def handle_list_tools() -> list[types.Tool]:
         "provider": "openai",
     }
 
-    base_url = "https://api.toolhouse.ai/v1"
-
-    response = httpx.post(base_url + "/get_tools", headers=headers, json=model)
+    response = httpx.post(TOOLHOUSE_BASE_URL + "/get_tools", headers=headers, json=model)
     response_data = response.json()
 
     for tool in response_data:
@@ -66,10 +67,29 @@ async def handle_call_tool(name: str, args: dict) -> list[types.TextContent | ty
     headers["Authorization"] = f"Bearer {TOOLHOUSE_API_KEY}"
 
     model = {
-
+        "provider": "openai",
+        "bundle": TOOLHOUSE_BUNDLE,
+        "metadata": {},
+        "content": {
+            "type": "function",
+            "id": secrets.token_hex(16),
+            "function": {
+                "name": name,
+                "arguments": args,
+            },
+        }
     }
 
-    return []
+    url = TOOLHOUSE_BASE_URL + "/run_tools"
+    response = httpx.post(url, headers=headers, json=model)
+    response_data = response.json()
+
+    return [
+        types.TextContent.model_construct(
+            type="text",
+            text=response_data["content"]["content"] or "no response"
+        )
+    ]
 
 
 
