@@ -1,7 +1,7 @@
 [project]
 name = "mcp-toolhouse"
 version = "0.1.0"
-description = "Add your description here"
+description = "a model context protocol (MCP) server that provides access to tools from the [Toolhouse](https://toolhouse.ai) platform."
 readme = "README.md"
 authors = [
     { name = "TerminalMan", email = "84923604+SecretiveShell@users.noreply.github.com" }
