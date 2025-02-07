@@ -1,0 +1,21 @@
+# Smithery configuration file: https://smithery.ai/docs/config#smitheryyaml
+
+startCommand:
+  type: stdio
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    type: object
+    required:
+      - toolhouseApiKey
+      - toolhouseBundle
+    properties:
+      toolhouseApiKey:
+        type: string
+        description: The API key for the Toolhouse server.
+      toolhouseBundle:
+        type: string
+        description: The specific tool bundle to use from Toolhouse.
+  commandFunction:
+    # A function that produces the CLI command to start the MCP on stdio.
+    |-
+    (config) => ({ command: 'mcp-toolhouse', env: { TOOLHOUSE_API_KEY: config.toolhouseApiKey, TOOLHOUSE_BUNDLE: config.toolhouseBundle, PYTHONUTF8: '1' } })
