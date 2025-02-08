@@ -13,6 +13,7 @@ To install Toolhouse for Claude Desktop automatically via [Smithery](https://smi
 npx -y @smithery/cli install @SecretiveShell/MCP-toolhouse --client claude
 ```
 
+### Manual Setup
 Setup your json like this:
 
 ```json
